@@ -1,26 +1,7 @@
-# WooCommerce  ºñ¬Éª«¬y
+# WooCommerce  ç¶ ç•Œç‰©æµ Child Plugin
 ---
-
-## 1. ¤¶²Ð
-
-  - ºñ¬É¬ì§Þ¶W°Ó¨ú³f¥I´Ú¥~±¾®M¥ó¡A´£¨Ñ¦X§@¯S©±¥H¤Î­Ó¤H·|­û¨Ï¥Î¶}©ñ­ì©l½X°Ó©±¨t²Î®É¡AµL¶·¦Û¦æ³B²z½ÆÂøªºÀË®Ö¡Aª½±µ³z¹L¦w¸Ë³]©w¥~±¾®M¥ó¡A«K¥i§Ö³t¤¶±µºñ¬É¬ì§Þª«¬y¾ã¦X¨t²Î¡A¨Ï¥Î¤è«K§Ö³tªº°Ó«~¹B°e¾÷¨î¡C
-    
-  - ª`·N¨Æ¶µ:­Y¶·¦P®É¨Ï¥Îª÷¬y¼Ò²Õ¡A°£¤F§ó·sª«¬y¼Ò²Õ¥~¡Aª÷¬y¼Ò²Õ¤]½Ð¦P¨B§ó·s¤~¯à¥¿±`¨Ï¥Î¡C
-
-
-## 2. ¾A¥Îª©¥»
-  - Wordpress 4.5.3 / 4.6.1 / 4.7.3 / 4.8.0 ~ 4.8.2
-  - WooCommerce 2.6.0 ~ 2.6.14 / 3.1.0 ~ 3.1.2 / 3.2.1
- 
-
-## 3. ¦w¸Ë¾É¤Þ±Ð¾Ç
-  - ¦w¸Ë¾É¤Þ¤å¥ó©ñ¸m©ó¸ê®Æ§¨¤º¡A¥i¨Ñ°Ñ¾\
-
-
-## 4. Ápµ¸§Ú­Ì
-  - ºñ¬É§Þ³N«ÈªA«H½c: techsupport@ecpay.com.tw
-  
-## 5.ª©Åv«Å§i
+  ä¿®æ”¹ç‰ˆ
+## 5.ç‰ˆæ¬Šå®£å‘Š
   - License: GPLv2 or later
   - License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
