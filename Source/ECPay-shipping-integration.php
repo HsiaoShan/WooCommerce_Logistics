@@ -1,14 +1,14 @@
 <?php
 /**
- * @copyright Copyright (c) 2018 Green World FinTech Service Co., Ltd. (https://www.ecpay.com.tw)
- * @version 1.2.180626
+ * @copyright Copyright (c) 2018 HsiaoShan Chang
+ * @version 0.2.0
  *
- * Plugin Name: ECPay Logistics for WooCommerce
- * Plugin URI: https://www.ecpay.com.tw
- * Description: ECPay Integration Logistics Gateway for WooCommerce
- * Version: 1.2.180626
- * Author: ECPay Green World FinTech Service Co., Ltd. 
- * Author URI:  techsupport@ecpay.com.tw
+ * Plugin Name: ECPay Logistics for WooCommerce_child
+ * Plugin URI: https://www.esozuo.com
+ * Description: ECPay Integration Logistics Gateway for WooCommerce_child
+ * Version: 0.2.0
+ * Author: HsiaoShan Chang
+ * Author URI:  hsiaoshan@esozuo.com
  */
 
 defined( 'ABSPATH' ) or exit;
@@ -43,7 +43,7 @@ if (!class_exists('ECPayShippingStatus')) {
             );
         }
 
-        function add_statuses($order_statuses) 
+        function add_statuses($order_statuses)
         {
             $order_statuses['wc-ecpay'] = _x( 'ECPay Shipping', 'Order status', 'woocommerce' );
 
@@ -73,16 +73,16 @@ function ECPayShippingMethodsInit()
                 'HILIFE_Collection' => '萊爾富取貨付款',
                 'FAMI'              => '全家',
                 'FAMI_Collection'   => '全家取貨付款',
-                'UNIMART'           => '統一超商',
-                'UNIMART_Collection'=> '統一超商寄貨便取貨付款'
+                'UNIMART'           => '7-11',
+                'UNIMART_Collection'=> '7-11寄貨便取貨付款'
             ),
             'C2C' => array(
                 'HILIFE'            => '萊爾富',
                 'HILIFE_Collection' => '萊爾富取貨付款',
                 'FAMI'              => '全家',
                 'FAMI_Collection'   => '全家取貨付款',
-                'UNIMART'           => '統一超商',
-                'UNIMART_Collection'=> '統一超商寄貨便取貨付款'
+                'UNIMART'           => '7-11',
+                'UNIMART_Collection'=> '7-11交貨便取貨付款'
             )
         );
 
@@ -116,7 +116,7 @@ function ECPayShippingMethodsInit()
         public $ecpaylogistic_max_amount;
         public $cartAmount;
 
-        public function __construct() 
+        public function __construct()
         {
             global $woocommerce;
 
@@ -131,7 +131,7 @@ function ECPayShippingMethodsInit()
             }
 
             $this->id = SHIPPING_ID;
-            $this->method_title = "綠界科技超商取貨";
+            $this->method_title = "選擇超商";
             $this->title = "綠界科技超商取貨";
             $this->options_array_label = '綠界科技超商取貨';
             $this->method_description = '';
@@ -142,7 +142,7 @@ function ECPayShippingMethodsInit()
 
             $this->init();
 
-            // add the action 
+            // add the action
             add_action( 'woocommerce_admin_order_data_after_order_details', array(&$this,'action_woocommerce_admin_order_data_after_shipping_address' ));
         }
 
@@ -182,15 +182,15 @@ function ECPayShippingMethodsInit()
             $this->get_shipping_options();
 
             // 結帳頁 Filter
-            
+
             add_filter('woocommerce_shipping_methods', array(&$this, 'add_wcso_shipping_methods'), 10, 1);
-            
+
             // 隱藏與顯示貨到付款金流
             add_filter('woocommerce_available_payment_gateways', array(&$this, 'wcso_filter_available_payment_gateways'), 10, 1);
 
-            
+
             // 結帳頁 Hook
-            
+
             // 顯示電子地圖
             add_action('woocommerce_review_order_after_shipping', array(&$this, 'wcso_review_order_shipping_options'));
 
@@ -255,11 +255,11 @@ function ECPayShippingMethodsInit()
                 foreach ($itemsInfo as $key => $value) {
                     $items[] = $value['name'];
                 }
-                
+
                 //訂單金額
                 $temp = explode('.', $orderInfo['_order_total'][0]);
                 $totalPrice = $temp[0];
-                
+
                 $AL = new EcpayLogistics();
                 $AL->HashKey = $this->HashKey;
                 $AL->HashIV  = $this->HashIV;
@@ -286,7 +286,7 @@ function ECPayShippingMethodsInit()
                     'Remark'               => esc_html($orderObj->get_customer_note()),
                     'PlatformID'           => ''
                 );
-                
+
                 $AL->SendExtend = array(
                     'ReceiverStoreID' => (array_key_exists('_shipping_CVSStoreID', $orderInfo)) ? $orderInfo['_shipping_CVSStoreID'][0] : ((isset($orderInfo['_CVSStoreID'][0])) ? $orderInfo['_CVSStoreID'][0] : ''),
                     'ReturnStoreID'   => (array_key_exists('_shipping_CVSStoreID', $orderInfo)) ? $orderInfo['_shipping_CVSStoreID'][0] : ((isset($orderInfo['_CVSStoreID'][0])) ? $orderInfo['_CVSStoreID'][0] : '')
@@ -369,6 +369,7 @@ function ECPayShippingMethodsInit()
             }
             return $fields;
         }
+
 
         // 填入結帳資料
         private function fill_checkout_info()
@@ -543,14 +544,14 @@ function ECPayShippingMethodsInit()
                 )
             );
         }
-        
+
         /**
         * admin_options function.
         *
         * @access public
         * @return void
         */
-        function admin_options() 
+        function admin_options()
         {
             ?>
                 <h3><?php echo $this->method_title; ?></h3>
@@ -649,7 +650,7 @@ function ECPayShippingMethodsInit()
         {
             return str_replace('-', '', sanitize_title($code)) . ( strstr($code, '*') ? '*' : '' );
         }
-        
+
         /**
         * validate_shipping_options_table_field function.
         *
@@ -661,7 +662,7 @@ function ECPayShippingMethodsInit()
         {
             return false;
         }
-        
+
         /**
          * generate_options_table_html function.
          * 後台運送項目
@@ -693,7 +694,7 @@ function ECPayShippingMethodsInit()
 
             return ob_get_clean();
         }
-        
+
         /**
          * process_shipping_options function.
          *
@@ -713,10 +714,10 @@ function ECPayShippingMethodsInit()
             $options = array();
             if (isset($this->ECPay_Logistics[$ecpay_category]) === true) {
                 foreach ($this->ECPay_Logistics[$ecpay_category] as $key => $value) {
-                    if (array_key_exists($key, $_POST)) $options[] = $key ;    
+                    if (array_key_exists($key, $_POST)) $options[] = $key ;
                 }
             }
-            
+
             update_option($this->id, $options);
             $this->get_shipping_options();
         }
@@ -773,6 +774,9 @@ function ECPayShippingMethodsInit()
                                 </select>
                                 ' . $html . '
                                 <p style="font-size: 0.8em;margin: 6px 0px; width: 84%;">
+                                    ' . __( '門市代碼', 'CVSStoreID' ) . ': <label id="CVSStoreIDLabel"></label>
+                                </p>
+                                <p style="font-size: 0.8em;margin: 6px 0px; width: 84%;">
                                     ' . __( '門市名稱', 'purchaserStore' ) . ': <label id="purchaserStoreLabel"></label>
                                 </p>
                                 <p style="font-size: 0.8em;margin: 6px 0px; width: 84%;">
@@ -781,8 +785,7 @@ function ECPayShippingMethodsInit()
                                 <p style="font-size: 0.8em;margin: 6px 0px; width: 84%;">
                                     ' . __( '門市電話', 'purchaserPhone' ) . ': <label id="purchaserPhoneLabel"></label>
                                 </p>
-                                <p style="font-size: 0.8em;color: #c9302c; width: 84%;">
-                                    使用綠界科技超商取貨，連絡電話請填寫手機號碼。
+                                <p style="font-size: 0.8em;color: #c9302c; width: 84%;">'. __( 'CVS Shipping Note', 'the7mk2' ). '
                                 </p>
                             </td>
                         </tr>
@@ -949,7 +952,7 @@ function ECPayShippingMethodsInit()
         function wcso_process_before_submit()
         {
             try {
-                $shipping_js_url = plugins_url( 'js/ECPay-shipping-checkout.js?1.2.180423', __FILE__ );
+                $shipping_js_url = plugins_url( 'js/ECPay-shipping-checkout.js?1.2.181005', __FILE__ );
 
                 if ($this->is_avalible_shipping_facade() === true) {
                     // 設定結帳用資料
@@ -966,10 +969,10 @@ function ECPayShippingMethodsInit()
                     // 記錄結帳資料至 Session
                     ?>
                     <script>
-                        // ecpay_checkout_request is required parameters for ECPay-shipping-checkout.js, 
+                        // ecpay_checkout_request is required parameters for ECPay-shipping-checkout.js,
                         // ECPay-shipping-checkout.js is script that register to be enqueued 'ecpay-shipping-checkout'.
                         var ecpay_checkout_request = {
-                            ajaxUrl: '<?php echo PLUGIN_URL . '/getSession.php'; ?>',
+                            ajaxUrl: '<?php echo PLUGIN_URL . 'getSession.php'; ?>',
                             checkoutData: <?php echo json_encode($checkout); ?>
                         };
                     </script>
@@ -1009,9 +1012,9 @@ function ECPayShippingMethodsInit()
             if (array_key_exists($ecpayShipping, $shippingMethod)) {
                 $ecpayShippingMethod = $shippingMethod[$ecpayShipping];
             }
-            
+
             if (get_post_meta($order->get_id()) && isset($ecpayShippingMethod)) {
-                echo '<p class="form-field"><strong>' . $this->title . ':</strong> ' . $ecpayShippingMethod . '(' . $ecpayShipping . ')' . '</p>';
+                echo '<p><strong>' . $this->title . ':</strong> ' . $ecpayShippingMethod . '(' . $ecpayShipping . ')' . '</p>';
             }
         }
 
@@ -1053,19 +1056,19 @@ if (is_admin()) {
 function ECPay_custom_admin_shipping_fields($fields)
 {
     global $post;
-    
+
     $fields['purchaserStore'] = array(
         'label' => __( '門市名稱', 'purchaserStore' ),
         'value' => get_post_meta( $post->ID, '_shipping_purchaserStore', true ),
         'show'  => true
     );
-  
+
     $fields['purchaserAddress'] = array(
         'label' => __( '門市地址', 'purchaserAddress' ),
         'value' => get_post_meta( $post->ID, '_shipping_purchaserAddress', true ),
         'show'  => true
     );
-  
+
     $fields['purchaserPhone'] = array(
         'label' => __( '門市電話', 'purchaserPhone' ),
         'value' => get_post_meta( $post->ID, '_shipping_purchaserPhone', true ),
@@ -1085,12 +1088,13 @@ add_action('woocommerce_checkout_update_order_meta', 'checkout_field_save' );
 
 function checkout_field_save( $order_id )
 {
-    // save custom field to order 
+    // save custom field to order
     if ( !empty($_POST['purchaserStore']) && !empty($_POST['purchaserAddress']) ) {
         update_post_meta( $order_id, '_shipping_purchaserStore'  , wc_clean( $_POST['purchaserStore'] ) );
         update_post_meta( $order_id, '_shipping_purchaserAddress', wc_clean( $_POST['purchaserAddress'] ) );
         update_post_meta( $order_id, '_shipping_purchaserPhone'  , wc_clean( $_POST['purchaserPhone'] ) );
         update_post_meta( $order_id, '_shipping_CVSStoreID'  , wc_clean( $_POST['CVSStoreID'] ) );
+        update_post_meta( $order_id, '_shipping_LogisticsSubType'  , wc_clean( $_POST['LogisticsSubType'] ) );
     }
 }
 
@@ -1112,7 +1116,7 @@ function ecpay_shipping_integration_plugin_init()
             $this->id = SHIPPING_PAY_ID;
             $this->icon = '';
             $this->has_fields = false;
-            $this->method_title = '綠界科技超商取貨付款';
+            $this->method_title = '選擇取貨超商';
             $this->method_description = "若使用綠界科技超商取貨，請開啟此付款方式";
 
             $this->init_form_fields();
@@ -1120,17 +1124,17 @@ function ecpay_shipping_integration_plugin_init()
             $this->title = $this->get_option( 'title' );
 
             $this->ecpay_payment_methods = $this->get_option('ecpay_payment_methods');
-            
+
             # Register a action to save administrator settings
             add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
-            
+
             # Register a action to redirect to ECPay payment center
             add_action( 'woocommerce_thankyou_' . $this->id, array( $this, 'thankyou_page' ) );
-            
+
             # Register a action to process the callback
             add_action('woocommerce_api_wc_gateway_ecpay_logis', array($this, 'receive_response'));
         }
-        
+
         /**
          * Initialise Gateway Settings Form Fields
          */
@@ -1152,7 +1156,7 @@ function ecpay_shipping_integration_plugin_init()
                 )
             );
         }
-        
+
         /**
          * Check the payment method and the chosen payment
          */
@@ -1160,7 +1164,7 @@ function ecpay_shipping_integration_plugin_init()
         {
             return true;
         }
-        
+
         /**
          * Process the payment
          */
@@ -1169,15 +1173,17 @@ function ecpay_shipping_integration_plugin_init()
             # Update order status
             $order = wc_get_order( $order_id );
             $order->update_status( 'on-hold', '綠界科技超商取貨' );
-            $order->reduce_order_stock();
+            //Deprecated
+            //$order->reduce_order_stock();
+            wc_reduce_stock_levels( $order_id );
             WC()->cart->empty_cart();
-           
+
             return array(
                 'result'    => 'success',
                 'redirect'  => $this->get_return_url( $order )
             );
         }
-        
+
         /**
          * Process the callback
          */
@@ -1193,7 +1199,7 @@ function ecpay_shipping_integration_plugin_init()
 
             if (!empty($response['CVSStoreName']) && !empty($response['CVSAddress']))
                 $this->receive_changeStore_response($response);
-            
+
             $order = wc_get_order( $MerchantTradeNo );
             $order->add_order_note(print_r($response, true));
 
@@ -1260,12 +1266,12 @@ function ecpay_shipping_integration_plugin_init()
         public function receive_changeStore_response($response = array())
         {
             $MerchantTradeNo = ECPayShippingOptions::getMerchantTradeNo($response);
-            
+
             $order = wc_get_order( $MerchantTradeNo );
             $order_status = $order->get_status();
 
             $order->add_order_note("會員已更換門市", 0, false );
-            
+
             //訂單更新門市訊息
             update_post_meta($MerchantTradeNo, '_CVSStoreID', $response['CVSStoreID']);
             update_post_meta($MerchantTradeNo, '_purchaserStore', $response['CVSStoreName']);
@@ -1282,7 +1288,7 @@ function ecpay_shipping_integration_plugin_init()
                 window.close();
                 alert('門市已更換，請重新整理頁面');
             //-->
-            </script> 
+            </script>
             <?php
             exit;
         }
@@ -1340,21 +1346,20 @@ function checkout_field_update_order_receipt($order)
 {
     $obj = new WC_Order($order->get_id());
     $shipping = $obj->get_items('shipping');
-    
+
     $is_ecpayShipping = 'N';
     foreach ($shipping as $key => $value) {
         if ($value['method_id'] == 'ecPay_shipping') $is_ecpayShipping = 'Y';
     }
-    
+
     if ($is_ecpayShipping == 'N') return;
-    
+
     $ECPayShipping = array(
         'FAMI_Collection' => 'FAMI',
         'HILIFE_Collection' => 'HILIFE',
         'UNIMART_Collection' => 'UNIMART'
     );
     $LogisticsSubType = $ECPayShipping[get_post_meta( $order->get_id(), 'ecPay_shipping' ,true)];
-
     echo __( '門市代號', 'CVSStoreID' ) . ': ';
     echo  (array_key_exists('_shipping_CVSStoreID', get_post_meta($order->get_id()))) ? get_post_meta( $order->get_id(), '_shipping_CVSStoreID', true ) . '<br>' : get_post_meta( $order->get_id(), '_CVSStoreID', true ) . '<br>';
     echo __( '門市名稱', 'purchaserStore' ) . ': ';
@@ -1363,7 +1368,7 @@ function checkout_field_update_order_receipt($order)
     echo  (array_key_exists('_shipping_purchaserAddress', get_post_meta($order->get_id()))) ? get_post_meta( $order->get_id(), '_shipping_purchaserAddress', true ) . '<br>' : get_post_meta( $order->get_id(), '_purchaserAddress', true ) . '<br>';
     echo __( '門市電話', 'purchaserPhone' ) . ': ' ;
     echo  (array_key_exists('_shipping_purchaserPhone', get_post_meta($order->get_id()))) ? get_post_meta( $order->get_id(), '_shipping_purchaserPhone', true ) . '<br>' : get_post_meta( $order->get_id(), '_purchaserPhone', true ) . '<br>';
-        
+
     if (!is_checkout()) echo '<input type="button" id="changeStore" value="更換門市" >';
 
     ?>
@@ -1377,7 +1382,7 @@ function checkout_field_update_order_receipt($order)
         <input type="hidden" id="Device" name="Device" value="0" />
         <input type="hidden" id="LogisticsType" name="LogisticsType" value="CVS" />
     </form>
-    
+
     <script type="text/javascript">
         document.getElementById("changeStore").onclick = function() {
             map = window.open('','ecpay',config='height=790px,width=1020px');
@@ -1396,6 +1401,7 @@ function checkout_payment_method($value)
     $value = check_checkout_payment_method($value);
 
     $CVSField = array(
+        'CVSStoreID' => '<label id="CVSStoreIDLabel">',
         'purchaserStore' => '<label id="purchaserStoreLabel">',
         'purchaserAddress' => '<label id="purchaserAddressLabel">',
         'purchaserPhone' => '<label id="purchaserPhoneLabel">'
@@ -1506,8 +1512,8 @@ function custom_order_detail_shipping_address($order)
             'HILIFE_Collection' => '萊爾富取貨付款',
             'FAMI'              => '全家',
             'FAMI_Collection'   => '全家取貨付款',
-            'UNIMART'           => '統一超商',
-            'UNIMART_Collection'=> '統一超商寄貨便取貨付款'
+            'UNIMART'           => '7-11',
+            'UNIMART_Collection'=> '7-11寄貨便取貨付款'
         );
         if (array_key_exists($ecpayShipping, $shippingStore)) {
             $ecpayShippingStore = $shippingStore[$ecpayShipping];

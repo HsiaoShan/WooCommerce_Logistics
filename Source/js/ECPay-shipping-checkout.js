@@ -2,7 +2,7 @@
  * ECPay integration shipping setting
 */
 jQuery(document).ready(function($) {
-    
+
     // ecpay_checkout_form is required to continue, ensure the object exists
     if ( typeof ecpay_checkout_request === 'undefined' ) {
         return false;
@@ -45,9 +45,9 @@ jQuery(document).ready(function($) {
 
             // 設定電子地圖按鍵文字
             if ($("#CVSStoreID").val() !== "") {
-                button_desc = "重選電子地圖";
+                button_desc = "重新選擇門市";
             } else {
-                button_desc = "電子地圖";
+                button_desc = "選擇取貨門市";
             }
             $("#__paymentButton").val(button_desc);
         },
@@ -67,7 +67,7 @@ jQuery(document).ready(function($) {
                 this.submit_ecpay_shipping
             );
         },
-        
+
         // 記錄結帳資訊
         ecpay_save_checkout_data: function() {
             var input_value = ecpay_checkout_form.get_input_value();
@@ -134,7 +134,7 @@ jQuery(document).ready(function($) {
                 alert('請選擇物流方式');
                 return false;
             }
-            
+
             // IE 若不使用此 method 將無法跳轉至選擇電子地圖頁
             document.getElementById('ECPayForm').submit();
         },
@@ -191,6 +191,7 @@ jQuery(document).ready(function($) {
             $( '#purchaserStore' ).val('');
             $( '#purchaserAddress' ).val('');
             $( '#purchaserPhone' ).val('');
+            $( '#CVSStoreIDLabel' ).html('');
             $( '#purchaserStoreLabel' ).html('');
             $( '#purchaserAddressLabel' ).html('');
             $( '#purchaserPhoneLabel' ).html('');
@@ -279,7 +280,7 @@ jQuery(document).ready(function($) {
                 if (payment_class === ecpay_shipping_payment_class) {
                     // 移除選取取貨付款
                     ecpay_checkout_form.ecpay_select_element(ecpay_shipping_payment_id, false);
-                    
+
                     // 設定預設金流
                     ecpay_checkout_form.ecpay_select_element(default_payment_method, true);
 
