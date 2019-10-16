@@ -11,6 +11,7 @@ jQuery(document).ready(function($) {
     var ecpay_checkout_form = {
         $checkout_form: $( 'form.checkout' ),
         $param: {},
+
         // 初始化
         init: function() {
             var param = {
@@ -32,6 +33,7 @@ jQuery(document).ready(function($) {
             ecpay_checkout_form.ecpay_hide_shipping_field('purchaserAddress');
             ecpay_checkout_form.ecpay_hide_shipping_field('purchaserPhone');
         },
+
         // 設定電子地圖按鍵文字
         set_ecpay_cvs_shipping_btn: function() {
             var id = "CVSStoreID";
@@ -134,7 +136,7 @@ jQuery(document).ready(function($) {
                 alert('請選擇物流方式');
                 return false;
             }
-            
+
             // IE 若不使用此 method 將無法跳轉至選擇電子地圖頁
             document.getElementById('ECPayForm').submit();
         },

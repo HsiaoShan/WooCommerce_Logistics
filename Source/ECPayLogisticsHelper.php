@@ -102,7 +102,7 @@ final class ECPayLogisticsHelper extends ECPayLogisticsModuleHelper
      */
     public function callJSHelper()
     {
-        return '<script src="' . $this->dirPath . 'js/ECPay-logistics-helper.js?1.0.190611"></script>';
+        return '<script src="' . $this->dirPath . 'js/ECPay-shipping-helper.js?1.0.190611"></script>';
     }
 
     /**
@@ -116,7 +116,6 @@ final class ECPayLogisticsHelper extends ECPayLogisticsModuleHelper
     {
         $postHTML  = $this->genPostHTML($data, 'ecpay');
         $postHTML .= "<input class='button' type='button' onclick='ecpayChangeStore();' value='變更門市' /><br />";
-        $postHTML .= $this->callJSHelper();
 
         return $postHTML;
     }
@@ -453,7 +452,6 @@ final class ECPayLogisticsHelper extends ECPayLogisticsModuleHelper
             $this->addPaymentFormFileds($paymentFormFileds);
             $postHTML  = $this->sdk->$paymentFormMethod();
             $postHTML .= "<input class='button' type='button' onclick='ecpayPaymentForm();' value='列印繳款單' /><br />";
-            $postHTML .= $this->callJSHelper();
         }
         return $postHTML;
     }
