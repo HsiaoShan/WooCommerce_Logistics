@@ -1,28 +1,27 @@
 /*
  * ECPay integration shipping setting
-*/
+ */
 jQuery(document).ready(function($) {
-    
+
     // ecpay_checkout_form is required to continue, ensure the object exists
-    if ( typeof ecpay_checkout_request === 'undefined' ) {
+    if (typeof ecpay_checkout_request === 'undefined') {
         return false;
     }
 
     var ecpay_checkout_form = {
-        $checkout_form: $( 'form.checkout' ),
+        $checkout_form: $('form.checkout'),
         $param: {},
 
         // 初始化
         init: function() {
             var param = {
                 shipping: '',
-                category: $( '#category' ).val(), // 物流類別
-                payment: $( '[name="payment_method"]' ), // 金流
+                category: $('#category').val(), // 物流類別
+                payment: $('[name="payment_method"]'), // 金流
                 url: ecpay_checkout_request.ajaxUrl, // 記錄 session 用 URL
             };
             this.$param = param;
             ecpay_checkout_form.ecpay_cvs_shipping_field_hide();
-            ecpay_checkout_form.set_ecpay_cvs_shipping_btn();
             ecpay_checkout_form.ecpay_shipping_change_payment();
         },
 
@@ -34,29 +33,9 @@ jQuery(document).ready(function($) {
             ecpay_checkout_form.ecpay_hide_shipping_field('purchaserPhone');
         },
 
-        // 設定電子地圖按鍵文字
-        set_ecpay_cvs_shipping_btn: function() {
-            var id = "CVSStoreID";
-            var button_desc = "";
-            //  檢查斷元素是否存在
-            if (document.getElementById(id) === null ||
-                typeof document.getElementById(id) === "undefined"
-            ) {
-                return;
-            }
-
-            // 設定電子地圖按鍵文字
-            if ($("#CVSStoreID").val() !== "") {
-                button_desc = "重選電子地圖";
-            } else {
-                button_desc = "電子地圖";
-            }
-            $("#__paymentButton").val(button_desc);
-        },
-
         // 加入選取綠界物流超商 change 事件處理
         init_ecpay_shipping_choose: function() {
-            this.$checkout_form.on( 'change',
+            this.$checkout_form.on('change',
                 '#shipping_option',
                 this.choose_ecpay_shipping
             );
@@ -64,12 +43,12 @@ jQuery(document).ready(function($) {
 
         // 加入選取綠界電子地圖按鍵 click 事件處理
         init_ecpay_shipping_submit: function() {
-            this.$checkout_form.on( 'click',
+            this.$checkout_form.on('click',
                 '#__paymentButton',
                 this.submit_ecpay_shipping
             );
         },
-        
+
         // 記錄結帳資訊
         ecpay_save_checkout_data: function() {
             var input_value = ecpay_checkout_form.get_input_value();
@@ -132,7 +111,7 @@ jQuery(document).ready(function($) {
             ecpay_checkout_form.ecpay_save_checkout_data(); // 記錄結帳資訊
 
             // 選擇物流檢查
-            if ($( '#shipping_option' ).val() == "------") {
+            if ($('#shipping_option').val() == "------") {
                 alert('請選擇物流方式');
                 return false;
             }
@@ -143,33 +122,33 @@ jQuery(document).ready(function($) {
 
         // 取得結帳資訊
         get_input_value: function() {
-            var billing_first_name  = ecpay_checkout_form.ecpay_get_element_value('billing_first_name');
-            var billing_last_name   = ecpay_checkout_form.ecpay_get_element_value('billing_last_name');
-            var billing_company     = ecpay_checkout_form.ecpay_get_element_value('billing_company');
-            var billing_phone       = ecpay_checkout_form.ecpay_get_element_value('billing_phone');
-            var billing_email       = ecpay_checkout_form.ecpay_get_element_value('billing_email');
-            var order_comments      = ecpay_checkout_form.ecpay_get_element_value('order_comments');
+            var billing_first_name = ecpay_checkout_form.ecpay_get_element_value('billing_first_name');
+            var billing_last_name = ecpay_checkout_form.ecpay_get_element_value('billing_last_name');
+            var billing_company = ecpay_checkout_form.ecpay_get_element_value('billing_company');
+            var billing_phone = ecpay_checkout_form.ecpay_get_element_value('billing_phone');
+            var billing_email = ecpay_checkout_form.ecpay_get_element_value('billing_email');
+            var order_comments = ecpay_checkout_form.ecpay_get_element_value('order_comments');
             var shipping_first_name = '';
-            var shipping_last_name  = '';
-            var shipping_company    = '';
+            var shipping_last_name = '';
+            var shipping_company = '';
             var shipping_to_different_address = '0';
-            if ( $( '#ship-to-different-address' ).find( 'input' ).is( ':checked' ) ) {
+            if ($('#ship-to-different-address').find('input').is(':checked')) {
                 shipping_to_different_address = '1';
                 shipping_first_name = ecpay_checkout_form.ecpay_get_element_value('shipping_first_name');
-                shipping_last_name  = ecpay_checkout_form.ecpay_get_element_value('shipping_last_name');
-                shipping_company    = ecpay_checkout_form.ecpay_get_element_value('shipping_company');
+                shipping_last_name = ecpay_checkout_form.ecpay_get_element_value('shipping_last_name');
+                shipping_company = ecpay_checkout_form.ecpay_get_element_value('shipping_company');
             }
             var data = {
-                billing_first_name  : billing_first_name,
-                billing_last_name   : billing_last_name,
-                billing_company     : billing_company,
-                billing_phone       : billing_phone,
-                billing_email       : billing_email,
-                order_comments      : order_comments,
-                shipping_to_different_address       : shipping_to_different_address,
-                shipping_first_name : shipping_first_name,
-                shipping_last_name  : shipping_last_name,
-                shipping_company    : shipping_company
+                billing_first_name: billing_first_name,
+                billing_last_name: billing_last_name,
+                billing_company: billing_company,
+                billing_phone: billing_phone,
+                billing_email: billing_email,
+                order_comments: order_comments,
+                shipping_to_different_address: shipping_to_different_address,
+                shipping_first_name: shipping_first_name,
+                shipping_last_name: shipping_last_name,
+                shipping_company: shipping_company
             };
             return data;
         },
@@ -189,13 +168,13 @@ jQuery(document).ready(function($) {
 
         // 清除綠界物流資訊
         ecpay_cvs_shipping_field_clear: function() {
-            $( '#CVSStoreID' ).val('');
-            $( '#purchaserStore' ).val('');
-            $( '#purchaserAddress' ).val('');
-            $( '#purchaserPhone' ).val('');
-            $( '#purchaserStoreLabel' ).html('');
-            $( '#purchaserAddressLabel' ).html('');
-            $( '#purchaserPhoneLabel' ).html('');
+            $('#CVSStoreID').val('');
+            $('#purchaserStore').val('');
+            $('#purchaserAddress').val('');
+            $('#purchaserPhone').val('');
+            $('#purchaserStoreLabel').html('');
+            $('#purchaserAddressLabel').html('');
+            $('#purchaserPhoneLabel').html('');
         },
 
         // 付款方式變更
@@ -281,7 +260,7 @@ jQuery(document).ready(function($) {
                 if (payment_class === ecpay_shipping_payment_class) {
                     // 移除選取取貨付款
                     ecpay_checkout_form.ecpay_select_element(ecpay_shipping_payment_id, false);
-                    
+
                     // 設定預設金流
                     ecpay_checkout_form.ecpay_select_element(default_payment_method, true);
 
@@ -309,14 +288,14 @@ jQuery(document).ready(function($) {
         },
 
         // 顯示金流(由 class 控制)
-        ecpay_display_payment_by_class: function (payment_class, display_value) {
+        ecpay_display_payment_by_class: function(payment_class, display_value) {
             var full_class = ecpay_checkout_form.ecpay_get_payment_class_name(payment_class);
             var payment_elements = document.getElementsByClassName(full_class);
             payment_elements[0].style.display = display_value;
         },
 
         // 取得金流 class 名稱
-        ecpay_get_payment_class_name: function (payment_class) {
+        ecpay_get_payment_class_name: function(payment_class) {
             var payment_main_class = 'wc_payment_method '; // 金流選項主 class
             var class_exists = document.getElementsByClassName(payment_main_class + payment_class).length;
             var full_class = '';
@@ -329,22 +308,22 @@ jQuery(document).ready(function($) {
         },
 
         // 設定預設金流
-        ecpay_set_default_payment_method: function (payment_method_id) {
+        ecpay_set_default_payment_method: function(payment_method_id) {
             ecpay_checkout_form.ecpay_select_element(payment_method_id, true);
         },
 
         // 選取元素
-        ecpay_select_element: function (id, value) {
+        ecpay_select_element: function(id, value) {
             document.getElementById(id).checked = value;
         },
 
         // 取得元素值
-        ecpay_get_element_value: function (id) {
+        ecpay_get_element_value: function(id) {
             return document.getElementById(id).value;
         },
 
         // 隱藏綠界取貨付款欄位
-        ecpay_hide_shipping_field: function (name) {
+        ecpay_hide_shipping_field: function(name) {
             $("label[for='" + name + "']").removeAttr("style").hide();
             $("#" + name).removeAttr("style").hide();
         },

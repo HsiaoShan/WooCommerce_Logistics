@@ -189,7 +189,7 @@ if (!class_exists('EcpayLogistics', false)) {
         /**
          * 版本
          */
-        const VERSION = '1.1.190911';
+        const VERSION = '1.1.191014';
 
         public $ServiceURL = '';
         public $HashKey = '';
@@ -1568,8 +1568,10 @@ if (!class_exists('EcpayLogistics', false)) {
             $this->IsOverLength($Name, $this->StringLength($Value, $this->Encode), $MaxLength);
 
             // 格式檢查
-            if (!filter_var($Value, FILTER_VALIDATE_EMAIL)) {
-                throw new Exception('Invalid ' . $Name . '.');
+            if (!empty($Value)) {
+                if (!filter_var($Value, FILTER_VALIDATE_EMAIL)) {
+                    throw new Exception('Invalid ' . $Name . '.');
+                }
             }
         }
 
@@ -2305,7 +2307,7 @@ if (!class_exists('EcpayCheckMacValue', true)) {
 		/**
 		* 產生檢查碼
 		*/
-        static function Generate($Params = array(), $HashKey = '', $HashIV = '')
+        public static function Generate($Params = array(), $HashKey = '', $HashIV = '')
         {
             if (isset($Params) ){
                 unset($Params['CheckMacValue']);

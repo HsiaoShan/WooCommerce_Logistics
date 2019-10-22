@@ -1,12 +1,12 @@
 <?php
 /**
  * @copyright Copyright (c) 2018 Green World FinTech Service Co., Ltd. (https://www.ecpay.com.tw)
- * @version 1.3.191004
+ * @version 1.3.1910180
  *
  * Plugin Name: ECPay Logistics for WooCommerce
  * Plugin URI: https://www.ecpay.com.tw
  * Description: ECPay Integration Logistics Gateway for WooCommerce
- * Version: 1.3.191004
+ * Version: 1.3.1910180
  * Author: ECPay Green World FinTech Service Co., Ltd.
  * Author URI:  techsupport@ecpay.com.tw
  */
@@ -18,7 +18,6 @@ define('ECPAY_SHIPPING_ID', 'ecpay_shipping');
 define('ECPAY_SHIPPING_PAY_ID', 'ecpay_shipping_pay');
 require_once(ABSPATH . 'wp-admin/includes/file.php');
 require_once(ECPAY_PLUGIN_PATH . 'ECPayLogisticsHelper.php');
-require_once(ECPAY_PLUGIN_PATH . 'ECPay.Logistics.Integration.php');
 
 // 新增訂單狀態
 if (!class_exists('ECPayShippingStatus')) {
@@ -437,27 +436,31 @@ function ECPayShippingMethodsInit()
          */
         private function custom_checkout_fields($fields)
         {
-            $fields['shipping']['purchaserStore'] = array(
+            $fields['billing']['purchaserStore'] = array(
                 'label'         => __( '超商取貨門市名稱', 'purchaserStore' ),
                 'default'       => isset($_REQUEST['CVSStoreName']) ? sanitize_text_field($_REQUEST['CVSStoreName']) : '',
                 'required'      => true,
+                'priority'      => 300,
                 'class'         => array('hidden')
             );
-            $fields['shipping']['purchaserAddress'] = array(
+            $fields['billing']['purchaserAddress'] = array(
                 'label'         => __( '超商取貨門市地址', 'purchaserAddress' ),
                 'default'       => isset($_REQUEST['CVSAddress']) ? sanitize_text_field($_REQUEST['CVSAddress']) : '',
                 'required'      => true,
+                'priority'      => 310,
                 'class'         => array('hidden')
             );
-            $fields['shipping']['purchaserPhone'] = array(
+            $fields['billing']['purchaserPhone'] = array(
                 'label'         => __( '超商取貨門市電話', 'purchaserPhone' ),
                 'default'       => isset($_REQUEST['CVSTelephone']) ? sanitize_text_field($_REQUEST['CVSTelephone']) : '',
+                'priority'      => 320,
                 'class'         => array('hidden'),
             );
-            $fields['shipping']['CVSStoreID'] = array(
+            $fields['billing']['CVSStoreID'] = array(
                 'label'         => __( '超商取貨門市代號', 'CVSStoreID' ),
                 'default'       => isset($_REQUEST['CVSStoreID']) ? sanitize_text_field($_REQUEST['CVSStoreID']) : '',
                 'required'      => true,
+                'priority'      => 330,
                 'class'         => array('hidden')
             );
             return $fields;
@@ -791,6 +794,11 @@ function ECPayShippingMethodsInit()
                     $shipping_type = $this->get_session_shipping_type();
                     $sub_type = $this->get_sub_type_facade();
 
+                    // 按鈕文字
+                    parse_str($_POST['post_data'], $postData);
+                    $CVSStoreID  = array_key_exists('CVSStoreID', $postData) ? $postData['CVSStoreID'] : '';
+                    $buttonText  = ($CVSStoreID === '') ? '電子地圖' : '重選電子地圖';
+
                     // 建立電子地圖
                     $shipping_name = $this->helper->ecpayLogistics[$this->category];
                     $replyUrl = esc_url(wc_get_page_permalink('checkout'));
@@ -801,7 +809,7 @@ function ECPayShippingMethodsInit()
                         'ServerReplyURL'   => $replyUrl,
                         'Device'           => wp_is_mobile()
                     );
-                    $html = $this->helper->getCvsMap($data);
+                    $html = $this->helper->getCvsMap($data, $buttonText);
 
                     $args = array(
                         'category'         => $this->category,
@@ -1364,7 +1372,12 @@ function ecpay_shipping_integration_plugin_init()
          */
         public function receive_response()
         {
-            $response = $_REQUEST;
+            // 判斷 sanitize 的變數型態
+            if (is_array($_REQUEST)) {
+                $response = array_map( 'sanitize_text_field', wp_unslash( $_REQUEST ) );
+            } else {
+                $response = sanitize_text_field($_REQUEST);
+            }
 
             // 設定Helper MerchantID
             $this->helper->setMerchantId($response['MerchantID']);
@@ -1605,10 +1618,10 @@ function ecpay_checkout_field_save( $order_id )
 {
     // save custom field to order
     if ( !empty($_POST['purchaserStore']) && !empty($_POST['purchaserAddress']) ) {
-        update_post_meta( $order_id, '_shipping_purchaserStore'  , wc_clean( $_POST['purchaserStore'] ) );
-        update_post_meta( $order_id, '_shipping_purchaserAddress', wc_clean( $_POST['purchaserAddress'] ) );
-        update_post_meta( $order_id, '_shipping_purchaserPhone'  , wc_clean( $_POST['purchaserPhone'] ) );
-        update_post_meta( $order_id, '_shipping_CVSStoreID'  , wc_clean( $_POST['CVSStoreID'] ) );
+        update_post_meta( $order_id, '_shipping_purchaserStore'  , sanitize_text_field( $_POST['purchaserStore'] ) );
+        update_post_meta( $order_id, '_shipping_purchaserAddress', sanitize_text_field( $_POST['purchaserAddress'] ) );
+        update_post_meta( $order_id, '_shipping_purchaserPhone'  , sanitize_text_field( $_POST['purchaserPhone'] ) );
+        update_post_meta( $order_id, '_shipping_CVSStoreID'      , sanitize_text_field( $_POST['CVSStoreID'] ) );
     }
 }
 

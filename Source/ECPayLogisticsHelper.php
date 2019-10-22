@@ -1,6 +1,6 @@
 <?php
 
-require_once('ECPayLogisticsModuleHelper.php');
+require_once(ECPAY_PLUGIN_PATH . 'ECPayLogisticsModuleHelper.php');
 
 final class ECPayLogisticsHelper extends ECPayLogisticsModuleHelper
 {
@@ -12,7 +12,7 @@ final class ECPayLogisticsHelper extends ECPayLogisticsModuleHelper
     /**
      * @var string SDK file path(required)
      */
-    protected $sdkFilePath = 'ECPay.Logistics.Integration.Shell.php';
+    protected $sdkFilePath = ECPAY_PLUGIN_PATH . 'ECPay.Logistics.Integration.Shell.php';
 
     /**
      * @var string 目錄路徑
@@ -211,7 +211,7 @@ final class ECPayLogisticsHelper extends ECPayLogisticsModuleHelper
      * @param  array $data
      * @return void  $html
      */
-    public function getCvsMap($data)
+    public function getCvsMap($data, $buttonText = '電子地圖')
     {
         // Filter inputs
         $whiteList = array(
@@ -236,7 +236,7 @@ final class ECPayLogisticsHelper extends ECPayLogisticsModuleHelper
         );
 
         // CvsMap
-        $html = $this->sdk->CvsMap('電子地圖', '_self');
+        $html = $this->sdk->CvsMap($buttonText, '_self');
 
         return $html;
     }
