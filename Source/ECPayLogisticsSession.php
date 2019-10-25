@@ -1,52 +1,28 @@
 <?php
 
-if ( !defined('ABSPATH') ) {
-    define('ABSPATH', $_SERVER['DOCUMENT_ROOT'] . '/');
-}
-require_once(ABSPATH . 'wp-load.php');
-
-session_start();
-
-if ( ! is_array($_POST)) {
-    return;
-}
-
-$serviceList = array('ecpayShippingType', 'checkoutInput');
-$checkoutInput = array();
-foreach ($_POST as $key => $value) {
-    if (in_array($key, $serviceList)) {
-        $checkoutInput[$key] = $value;
-    }
-}
-
-$LogisticsField = 'ECPay_' . key($checkoutInput);
-$LogisticsObj = new $LogisticsField;
-$LogisticsObj->setInput($checkoutInput);
-$LogisticsObj->validate();
-$LogisticsObj->store();
-
+// 前台 - 結帳頁電子地圖
 class ECPayShippingCheckout
 {
     public $ecpayInput = array();
     public $ecpayCheckout = array();
 
-    function setInput($post)
+    public function setInput($post)
     {
         $this->ecpayInput = $post;
     }
 
-    function store()
+    public function store()
     {
         foreach ($this->ecpayCheckout as $key => $value) {
             $_SESSION[$key] = $value;
         }
     }
-
 }
 
+// 切換超商
 class ECPay_ecpayShippingType extends ECPayShippingCheckout
 {
-    function validate()
+    public function validate()
     {
         $checkoutInput = $this->ecpayInput['ecpayShippingType'];
         $checkout = array();
@@ -70,9 +46,10 @@ class ECPay_ecpayShippingType extends ECPayShippingCheckout
     }
 }
 
+// 選擇門市
 class ECPay_checkoutInput extends ECPayShippingCheckout
 {
-    function validate()
+    public function validate()
     {
         $checkoutInput = $this->ecpayInput['checkoutInput'];
         $checkout = array();
